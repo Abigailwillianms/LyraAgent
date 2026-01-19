@@ -26,8 +26,8 @@ def AgentTouch(x: float,y: float,step:int , times=1, **kwargs) ->str:
     """
     img = Image.open(f"./images/images{step}.jpg")
     width, height = img.size
-    x_air = width/1000 * x - 15.5
-    y_air = height/1000 * y + 2.3
+    x_air = width/1000 * x
+    y_air = height/1000 * y
     touch(v=(x_air,y_air),times=times,**kwargs)
     snapshot("../../Documents/我的POPO/QwenAgent/QwenAgent/images/images01.jpg")
     return f"已成功点击{x},{y}"
