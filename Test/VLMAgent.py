@@ -1,5 +1,5 @@
 from langchain.agents import create_agent
-from loadModel import VML
+from VML.loadModel import VML
 
 agent=create_agent(
     model=VML,

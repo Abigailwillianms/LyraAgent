@@ -1,9 +1,9 @@
 from langchain.agents import create_agent
-from loadModel import VML
+from VML.loadModel import VML
 from airtest.core.api import *
-from AirtestTools import AgentTouch
-from MemoryLoad import checkp,config
-from GetWindowTitle import get_window_titles
+from VMLTools.AirtestTools import AgentTouch
+from Memory.MemoryLoad import checkp,config
+from Tools.GetWindowTitle import get_window_titles
 from PIL import Image
 
 get_window_titles()
