@@ -2,6 +2,7 @@ from langchain.agents import create_agent
 from VML.loadModel import VML
 from airtest.core.api import *
 from VMLTools.AirtestTools import AgentTouch,AgentKeyEvent
+from VMLTools.RAGTools import GetRAG
 from Memory.MemoryLoad import checkp,config
 from Tools.GetWindowTitle import get_window_titles
 from PIL import Image
@@ -18,11 +19,12 @@ print("已找到窗口，请准备输入指令==========")
 
 agent=create_agent(
     model=VML,
-    tools=[AgentTouch,AgentKeyEvent],
-    system_prompt="""你是一个拥有视觉的小助手，可以帮助我分析图像并实现点击操作，请记住“每次回答告诉我你的思考过程，以及调用了几次工具，每次传入的参数”。
+    tools=[AgentTouch,AgentKeyEvent,GetRAG],
+    system_prompt="""你是一个强大的电脑使用者。
     对于工具调用，请记住以下几点：
     1.调用AgentTouch时传递的坐标是x,y两个float类型,而非列表或元组；
-    2.请注意：如果你认为需要分多步操作，可以先规划当前页面的操作并退出，我后续会为你提供你打开的页面供你继续执行，请不要一直尝试同样的操作
+    2.请注意：如果你认为需要分多步操作，可以先规划当前页面的操作并退出，我后续会为你提供你打开的页面供你继续执行，请不要
+    一直尝试同样的操作
     
     对于不同的窗口，请记住下面的一些操作流程：
     1.对于网易云音乐：播放音乐通过点击歌曲头像左侧的数字来播放
@@ -60,7 +62,7 @@ while True:
     rew=0
     while ret!="Exit":
         rew=rew+1
-        print("正在评估结果")
+        print("正在评估下一步")
         snapshot(f"./images/images{step}_res{rew}.jpg")
         img = Image.open(f"./images/images{step}_res{rew}.jpg")
         width, height = img.size

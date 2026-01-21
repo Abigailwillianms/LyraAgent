@@ -1,12 +1,13 @@
 import os
-from dotenv import load_dotenv
 import dashscope
 from langchain_community.chat_models.tongyi import ChatTongyi
+from dotenv import load_dotenv
 
 load_dotenv()
 dashscope.base_http_api_url = "https://dashscope.aliyuncs.com/api/v1"
 class VMLTongyi(ChatTongyi):
     def GetImage(self,message):
+
         response = dashscope.MultiModalConversation.call(
             api_key=os.getenv("TONGYI_API_KEY"),
             model='qwen3-vl-plus',
