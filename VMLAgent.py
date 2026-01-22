@@ -33,7 +33,13 @@ agent=create_agent(
 
 #并且告诉我你的思考过程，以及调用了几次工具，每次传入的参数
 step=0
-connect_device(f"Windows:///?title_re={Window}*")
+# 连接设备 - 根据输入类型选择连接方式
+if Window.isdigit():
+    # 如果输入是数字，使用窗口句柄连接
+    connect_device(f"Windows:///{Window}")
+else:
+    # 如果输入是字符串，使用标题正则连接
+    connect_device(f"Windows:///?title_re={Window}*")
 window = device().app.top_window()  # 获取当前窗口
 
 

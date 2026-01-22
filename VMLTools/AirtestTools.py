@@ -41,8 +41,22 @@ def AgentTouch(x: float, y: float, step: int, times=1, **kwargs) -> str:
     "PGUP": "{PGUP}",
     "PAGE_DOWN": "{PGDN}",
     "PGDN": "{PGDN}",
-    "SPACE": " ",}
+    "SPACE": " ",
+    "WIN": "{LWIN}",
+    "LWIN": "{LWIN}",
+    "RWIN": "{RWIN}",}
     """)
 def AgentKeyEvent(keyname, **kwargs) -> str:
+    # 特殊按键映射
+    key_mappings = {
+        "WIN": "{LWIN}",
+        "LWIN": "{LWIN}",
+        "RWIN": "{RWIN}",
+    }
+    
+    # 检查并转换特殊按键
+    if keyname in key_mappings:
+        keyname = key_mappings[keyname]
+    
     keyevent(keyname, **kwargs)
     return "成功输入"
