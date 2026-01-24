@@ -4,7 +4,7 @@ from langchain_core.tools import tool
 
 load_dotenv()
 
-@tool("搜索知识库",description="""本工具用于调用无畏契约知识库，参数query：需要查询的问题""")
+@tool("搜索知识库",description="""本工具用于调用网易云音乐知识库，参数query：需要查询的问题""")
 def GetRAG(query:str) ->str:
     index = DashScopeCloudIndex("RAGTest")
 

@@ -3,7 +3,9 @@ from airtest.core.api import *
 from PIL import Image
 
 
-@tool("点击", description="""此工具用于实现点击操作
+@tool("点击", description="""此工具用于实现点击操作。
+    对于工具调用，请记住以下几点：
+    1.调用AgentTouch时传递的坐标是x,y两个float类型,而非列表或元组；
     参数：
     x；点击点的横坐标
     y:点击点的纵坐标

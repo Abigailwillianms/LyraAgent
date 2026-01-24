@@ -53,11 +53,18 @@ while True:
                 {"image": f"images/images{step}.jpg"},
                 {"text": Ins}]
         }]
-    res = agent.invoke(
+    for chunk in agent.stream(
+            {"messages": messages}
+            , config,
+            #stream_mode="updates"
+    ):
+        for ST, data in chunk.items():
+            print(data['messages'][-1].content,flush=True)
+    """res = agent.invoke(
         {"messages": messages}
         , config
     )
-    print(res['messages'][-1].content)
+    print(res['messages'][-1].content)"""
     ret=""
     rew=0
     while ret!="Exit":
@@ -73,12 +80,14 @@ while True:
                     {"image": f"images/images{step}_res{rew}.jpg"},
                     {"text": "这是你完成的效果，请评估是否达成成果，若达成则严格输出且仅输出'Exit'(不要有其他任何内容)，若未达成则重试"}]
             }]
-        res = agent.invoke(
-            {"messages": messages}
-            , config
-        )
-        ret=res['messages'][-1].content
-        print(ret)
+        for chunk in agent.stream(
+                {"messages": messages}
+                , config,
+                stream_mode="updates"
+        ):
+            for ST, data in chunk.items():
+                ret=data['messages'][-1].content
+                print(ret, flush=True)
 
 
 
