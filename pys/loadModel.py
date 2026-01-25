@@ -8,7 +8,7 @@ dashscope.base_http_api_url = "https://dashscope.aliyuncs.com/api/v1"
 class VMLTongyi(ChatTongyi):
     def GetImage(self,message):
         response = dashscope.MultiModalConversation.call(
-            api_key=os.getenv("TONGYI_API_KEY"),
+            api_key=os.getenv("TONGYI_API_KEY2"),
             model='qwen3-vl-plus',
             messages=messages
         )

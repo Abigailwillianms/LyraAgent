@@ -11,13 +11,23 @@ from PIL import Image
     right_click:是否右键点击（Windows系统下适用）
     times:点击次数
     """)
-def AgentTouch(x: float, y: float, step: int, times=1, **kwargs) -> str:
-    img = Image.open(f"./images/images{step}.jpg")
-    width, height = img.size
-    x_air = width / 1000 * x
-    y_air = height / 1000 * y
-    touch(v=(x_air, y_air), times=times, **kwargs)
-    return f"已成功点击{x},{y}"
+def AgentTouch(x: float, y: float, times=1, **kwargs) -> str:
+    try:
+        # 动态查找最新截图
+        import os, glob
+        screenshot_files = glob.glob("./images/*.jpg")
+        screenshot_files.sort(key=os.path.getmtime, reverse=True)
+        if not screenshot_files:
+            return "未找到截图文件"
+        latest_file = screenshot_files[0]
+        img = Image.open(latest_file)
+        width, height = img.size
+        x_air = width / 1000 * x
+        y_air = height / 1000 * y
+        touch(v=(x_air, y_air), times=times, **kwargs)
+        return f"已成功点击{x},{y}"
+    except Exception as e:
+        return f"点击操作失败：{str(e)}"
 
 
 @tool("键盘输入", description="""
@@ -47,16 +57,43 @@ def AgentTouch(x: float, y: float, step: int, times=1, **kwargs) -> str:
     "RWIN": "{RWIN}",}
     """)
 def AgentKeyEvent(keyname, **kwargs) -> str:
-    # 特殊按键映射
-    key_mappings = {
-        "WIN": "{LWIN}",
-        "LWIN": "{LWIN}",
-        "RWIN": "{RWIN}",
-    }
-    
-    # 检查并转换特殊按键
-    if keyname in key_mappings:
-        keyname = key_mappings[keyname]
-    
-    keyevent(keyname, **kwargs)
-    return "成功输入"
+    try:
+        # 特殊按键映射
+        key_mappings = {
+            "WIN": "{LWIN}",
+            "LWIN": "{LWIN}",
+            "RWIN": "{RWIN}",
+            "CTRL": "^",
+            "LCTRL": "^",
+            "RCTRL": "^",
+            "ALT": "%",
+            "LALT": "%",
+            "RALT": "%",
+            "SHIFT": "+",
+            "LSHIFT": "+",
+            "RSHIFT": "+",
+            "ENTER": "{ENTER}",
+            "RETURN": "{RETURN}",
+            "ESC": "{ESC}",
+            "TAB": "{TAB}",
+            "BACKSPACE": "{BACKSPACE}",
+            "DELETE": "{DEL}",
+            "DEL": "{DEL}",
+            "INSERT": "{INSERT}",
+            "HOME": "{HOME}",
+            "END": "{END}",
+            "PAGE_UP": "{PGUP}",
+            "PGUP": "{PGUP}",
+            "PAGE_DOWN": "{PGDN}",
+            "PGDN": "{PGDN}",
+            "SPACE": " ",
+        }
+        
+        # 检查并转换特殊按键
+        if keyname in key_mappings:
+            keyname = key_mappings[keyname]
+        
+        keyevent(keyname, **kwargs)
+        return "成功输入"
+    except Exception as e:
+        return f"键盘输入失败：{str(e)}"
