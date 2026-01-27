@@ -17,7 +17,6 @@ class VMLTongyi(ChatTongyi):
 VML = VMLTongyi(
     api_key=os.getenv("TONGYI_API_KEY"),
     model='qwen3-vl-plus',
-    streaming=True,
 )
 
 messages = [
