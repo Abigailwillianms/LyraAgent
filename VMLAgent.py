@@ -7,7 +7,7 @@ from Memory.MemoryLoad import checkp,config
 from Tools.GetWindowTitle import get_window_titles
 import re
 from PIL import Image
-from Tools.LargeRight import adminSr
+from Tools.AdminRight import adminSr
 from langchain.agents.middleware import SummarizationMiddleware, ToolCallLimitMiddleware,ModelCallLimitMiddleware
 
 

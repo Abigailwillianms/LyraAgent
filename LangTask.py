@@ -2,6 +2,7 @@ from langchain.agents import create_agent
 from VML.loadModel import VML
 from airtest.core.api import *
 from VMLTools.AirtestTools import AgentTouch, AgentKeyEvent
+from VMLTools.GenshinTools import Genshin_move
 from VMLTools.RAGTools import GetRAG
 from Memory.MemoryLoad import checkp, config
 from PIL import Image
@@ -22,7 +23,7 @@ Keyboard_limiter = ToolCallLimitMiddleware(
     tool_name="键盘输入",
     run_limit=3,
 )
-def execute_agent_task(window_title, initial_instruction):
+def execute_agent_task(window_title, initial_instruction,nums):
     """
     非交互式执行agent任务
 
@@ -44,7 +45,7 @@ def execute_agent_task(window_title, initial_instruction):
     # 创建agent
     agent = create_agent(
         model=VML,
-        tools=[AgentTouch, AgentKeyEvent, GetRAG],
+        tools=[AgentTouch, AgentKeyEvent, GetRAG, Genshin_move],
         system_prompt="""你是一个强大的电脑使用者。请根据每次得到的图片规划接下来的最多3次工具调用操作。
             对于工具调用，请记住以下几点：
             1.请注意：如果指令中提到不是第一步，则说明你已完成前置步骤，请接着继续完成
@@ -68,13 +69,13 @@ def execute_agent_task(window_title, initial_instruction):
         step += 1
         # 截图
         window.set_focus()
-        snapshot(f"./images/images{step}.jpg")
+        snapshot(f"./images/images{nums}{step}.jpg")
 
         messages = [
             {
                 "role": "user",
                 "content": [
-                    {"image": f"images/images{step}.jpg"},
+                    {"image": f"images/images{nums}{step}.jpg"},
                     {"text": initial_instruction}
                 ]
             }
@@ -102,12 +103,3 @@ def execute_agent_task(window_title, initial_instruction):
 
 
 
-# 使用示例
-if __name__ == "__main__":
-    get_window_titles()
-    WINDOW_TITLE = input("输入窗口名：")  # 替换为实际的窗口标题
-    INITIAL_INSTRUCTION = input("输入指令：")  # 替换为你的指令
-
-    # 执行任务
-    result = execute_agent_task(WINDOW_TITLE, INITIAL_INSTRUCTION)
-    print(f"执行结果: {result}")
