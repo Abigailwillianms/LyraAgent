@@ -5,8 +5,6 @@ from VMLTools.AirtestTools import AgentTouch, AgentKeyEvent
 from VMLTools.GenshinTools import Genshin_move
 from VMLTools.RAGTools import GetRAG
 from Memory.MemoryLoad import checkp, config
-from PIL import Image
-from Tools.GetWindowTitle import get_window_titles
 from langchain.agents.middleware import SummarizationMiddleware, ToolCallLimitMiddleware,ModelCallLimitMiddleware
 
 
@@ -23,7 +21,7 @@ Keyboard_limiter = ToolCallLimitMiddleware(
     tool_name="键盘输入",
     run_limit=3,
 )
-def execute_agent_task(window_title, initial_instruction,nums):
+def execute_agent_task(window, initial_instruction,nums):
     """
     非交互式执行agent任务
 
@@ -34,13 +32,6 @@ def execute_agent_task(window_title, initial_instruction,nums):
     """
 
 
-    # 连接设备
-    try:
-        connect_device(f"Windows:///?title_re={window_title}*")
-        window = device().app.top_window()  # 获取当前窗口
-        window.set_focus()
-    except Exception as e:
-        print(f"连接窗口失败")
 
     # 创建agent
     agent = create_agent(
