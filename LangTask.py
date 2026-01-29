@@ -7,49 +7,41 @@ from VMLTools.RAGTools import GetRAG
 from Memory.MemoryLoad import checkp, config
 from langchain.agents.middleware import SummarizationMiddleware, ToolCallLimitMiddleware,ModelCallLimitMiddleware
 
-
-modelLimiter =  ModelCallLimitMiddleware(
-            run_limit=5,
+summarize_mid = SummarizationMiddleware(
+            model=VML,
+            max_tokens_before_summary=4000,
+            messages_to_keep=20,
+        )
+modelLimiter = ModelCallLimitMiddleware(
+            run_limit=3,
             exit_behavior="end",
         )
+global_limiter = ToolCallLimitMiddleware(run_limit=3,exit_behavior="end")
+RAG_limiter = ToolCallLimitMiddleware(
+    tool_name="搜索知识库",
+    run_limit=1,
+)
+Move_limiter = ToolCallLimitMiddleware(
+    tool_name="角色移动",
+    run_limit=1,
+    exit_behavior="end"
+)
 
-touch_limiter = ToolCallLimitMiddleware(
-    tool_name="点击",
-    run_limit=3,
-)
-Keyboard_limiter = ToolCallLimitMiddleware(
-    tool_name="键盘输入",
-    run_limit=3,
-)
 def execute_agent_task(window, initial_instruction,nums):
-    """
-    非交互式执行agent任务
-
-    参数:
-        window_title: 窗口标题
-        initial_instruction: 初始指令
-        max_retries: 最大重试次数
-    """
-
-
-
     # 创建agent
     agent = create_agent(
         model=VML,
         tools=[AgentTouch, AgentKeyEvent, GetRAG, Genshin_move],
-        system_prompt="""你是一个强大的电脑使用者。请根据每次得到的图片规划接下来的最多3次工具调用操作。
-            对于工具调用，请记住以下几点：
-            1.请注意：如果指令中提到不是第一步，则说明你已完成前置步骤，请接着继续完成
-            2.如果发现没有工具调用额度了，请返回，我会给你新的工具调用次数
-            3.如果你发现已经完成任务，请直接返回“Exit”(不要有其他任何多余内容)，这样可以触发结束操作
-            4.如果没有完成任务，哪怕你已经没有工具调用次数了也不能返回“Exit”
-
-            对于不同的窗口，请记住下面的一些操作流程：
-            1.对于网易云音乐：播放音乐通过点击歌曲头像左侧的数字来播放
-            2.搜索时，搜索框输入后可以键盘输入{ENTER}搜索
+        system_prompt=f"""
+            你是一名经验丰富的原神PC端玩家，擅长进行长时间的原神游玩。请根据当前游戏画面，规划接下来一步操作。
+            请记住：
+            1.如果你若评估任务已完成请返回以“Exit”的回答，这样可以触发结束操作；
+            2.请准确严谨地判断是否完成任务，在输出的图像中看到任务完成之前绝对不能返回“Exit”。
+            
+            你目前需要完成的任务是{initial_instruction}。
             """,
         checkpointer=checkp,
-        middleware=[modelLimiter, touch_limiter, Keyboard_limiter]
+        middleware=[modelLimiter,RAG_limiter,Move_limiter,summarize_mid]
     )
 
     # 初始化变量
@@ -67,26 +59,24 @@ def execute_agent_task(window, initial_instruction,nums):
                 "role": "user",
                 "content": [
                     {"image": f"images/images{nums}{step}.jpg"},
-                    {"text": initial_instruction}
+                    {"text": f"第{step}步，我已为你提供更多的所有工具的调用次数，请继续完成{initial_instruction}任务，注意：若没有完成请务必继续执行"}
                 ]
             }
         ]
 
-        print(f"步骤 {step}")
+        print(f"步骤 {step}：输入图片images{nums}{step}.jpg")
 
         res = agent.invoke(
             {"messages": messages}
             , config
         )
         ret = res['messages'][-1].content
-
+        print(ret)
         if isinstance(ret, str):
             retry_count += 1
         else:
             ret=ret[0]['text']
-            print(ret)
-            if ret == "Exit":
-                print("正常退出")
+            if ret.endswith("Exit"):
                 return
             else:
                 retry_count += 1

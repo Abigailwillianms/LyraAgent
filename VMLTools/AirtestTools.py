@@ -12,7 +12,7 @@ from PIL import Image
     right_click:是否右键点击（Windows系统下适用）
     times:点击次数
     """)
-def AgentTouch(pos, step: int = 1, times=1, **kwargs) -> str:
+def AgentTouch(pos, step: int = 1,  **kwargs) -> str:
     """
     修复AI可能传入错误格式的参数
     """
@@ -35,11 +35,11 @@ def AgentTouch(pos, step: int = 1, times=1, **kwargs) -> str:
     else:
         return f"坐标格式错误: {pos}"
 
-    img = Image.open(f"./images/images{step}.jpg")
+    img = Image.open(f"./images/images11.jpg")
     width, height = img.size
     x_air = width / 1000 * x
     y_air = height / 1000 * y
-    touch(v=(x_air, y_air), times=times, **kwargs)
+    touch(v=(x_air, y_air), **kwargs)
     return f"已成功点击({x}, {y})"
 
 
