@@ -2,7 +2,7 @@ from langchain.agents import create_agent
 from VML.loadModel import VML
 from airtest.core.api import *
 from VMLTools.AirtestTools import AgentTouch, AgentKeyEvent
-from VMLTools.GenshinTools import Genshin_move
+from VMLTools.GenshinTools import Genshin_move,mouseControler
 from VMLTools.RAGTools import GetRAG
 from Memory.MemoryLoad import checkp, config
 from langchain.agents.middleware import SummarizationMiddleware, ToolCallLimitMiddleware,ModelCallLimitMiddleware
@@ -24,14 +24,17 @@ RAG_limiter = ToolCallLimitMiddleware(
 Move_limiter = ToolCallLimitMiddleware(
     tool_name="角色移动",
     run_limit=1,
-    exit_behavior="end"
+)
+Mouse_limiter = ToolCallLimitMiddleware(
+    tool_name="视角转向",
+    run_limit=1,
 )
 
 def execute_agent_task(window, initial_instruction,nums):
     # 创建agent
     agent = create_agent(
         model=VML,
-        tools=[AgentTouch, AgentKeyEvent, GetRAG, Genshin_move],
+        tools=[AgentTouch, AgentKeyEvent, GetRAG, Genshin_move,mouseControler],
         system_prompt=f"""
             你是一名经验丰富的原神PC端玩家，擅长进行长时间的原神游玩。请根据当前游戏画面，规划接下来一步操作。
             请记住：
@@ -41,7 +44,7 @@ def execute_agent_task(window, initial_instruction,nums):
             你目前需要完成的任务是{initial_instruction}。
             """,
         checkpointer=checkp,
-        middleware=[modelLimiter,RAG_limiter,Move_limiter,summarize_mid]
+        middleware=[modelLimiter,RAG_limiter,Move_limiter,summarize_mid,Mouse_limiter]
     )
 
     # 初始化变量

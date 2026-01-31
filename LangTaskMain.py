@@ -8,7 +8,7 @@ get_window_titles()
 step=0
 
 # 连接设备
-# WINDOW_TITLE = input("请输入窗口名：")
+#WINDOW_TITLE = input("请输入窗口名：")
 WINDOW_TITLE = "原神"
 try:
     connect_device(f"Windows:///?title_re={WINDOW_TITLE}*")

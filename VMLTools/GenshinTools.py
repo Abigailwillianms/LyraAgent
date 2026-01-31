@@ -1,6 +1,6 @@
 from airtest.core.win.win import *
 from langchain_core.tools import tool
-
+from VMLTools.MouseControl import GameMouseController
 
 @tool("角色移动", description="""
     此工具用于控制游戏角色移动，支持持续移动指定时间。
@@ -37,3 +37,23 @@ def Genshin_move(direction: str, duration: float = 1.0) -> str:
     key_release(direction)
 
     return f"成功向{direction}方向移动{duration}秒"
+
+@tool("视角转向",description="""
+    此工具用于控制游戏角色移动，支持持续移动指定时间。
+    参数：
+    1. direction: 视角转动方向，可选值为“right”,"left"
+    2. duration: 转动持续时间
+
+    示例：
+    - 向左转动0.8秒：视角转向(direction="left", duration=0.8)
+    - 向左转动0.5秒：视角转向(direction="right", duration=0.5)
+    """)
+def mouseControler(direction: str = "right", duration: float =0.5) -> str:
+    print(f"已执行向{direction}转动{duration}秒")
+    controler = GameMouseController()
+    controler.game_look(direction, duration)
+    return f"已执行向{direction}方向转动{duration}秒"
+
+
+
+
